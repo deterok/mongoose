@@ -40,12 +40,12 @@ func (c *Command) AddCommand(command *Command) {
 	c.AddNamedCommand(strings.ToLower(command.Name), command)
 }
 
-func (c *Command) AddNamedCommand(name string, command *Command) {
+func (c *Command) AddNamedCommand(name string, childCmd *Command) {
 	if c.commands == nil {
 		c.commands = make(map[string]*Command)
 	}
 
-	c.commands[name] = command
+	c.commands[name] = childCmd
 	c.Flags().SetInterspersed(false)
 
 	if c.Output() != nil && command.Output() == nil {
@@ -64,9 +64,12 @@ func (c *Command) Execute(args []string) {
 	}
 
 	if len(c.Tail) > 0 {
-		subCMD := c.GetCommand(c.Tail[0])
-		if subCMD != nil {
-			subCMD.Execute(c.Tail[1:])
+		command := c.Tail[0]
+		subCmd := c.GetCommand(command)
+
+		if subCmd != nil {
+			subCmd.Execute(c.Tail[1:])
+			return
 		}
 
 	} else {
