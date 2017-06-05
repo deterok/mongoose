@@ -89,8 +89,8 @@ func (c *Command) Parse(args []string) error {
 
 	switch {
 	case c.MinArgs > len(parsedArgs):
-		errString := fmt.Sprintf("The number of incoming arguments is less than the minimum (%d' > %d)",
-			c.MinArgs, len(parsedArgs))
+		errString := fmt.Sprintf("A number of incoming arguments "+
+			"is less than the minimum (%d > %d)", c.MinArgs, len(parsedArgs))
 		return errors.New(errString)
 
 	case c.MinArgs == 0:
