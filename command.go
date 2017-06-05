@@ -48,9 +48,7 @@ func (c *Command) AddNamedCommand(name string, childCmd *Command) {
 	c.commands[name] = childCmd
 	c.Flags().SetInterspersed(false)
 
-	if c.Output() != nil && command.Output() == nil {
-		command.SetOutput(c.Output())
-	}
+	c.SetChildOutput(childCmd)
 }
 
 func (c *Command) Execute(args []string) {
@@ -147,6 +145,16 @@ func (c *Command) FindCommand(names []string) *Command {
 func (c *Command) SetOutput(output io.Writer) {
 	c.output = output
 	c.Flags().SetOutput(output)
+
+	for _, childCmd := range c.commands {
+		c.SetChildOutput(childCmd)
+	}
+}
+
+func (c *Command) SetChildOutput(childCmd *Command) {
+	if c.output != nil && childCmd.output == nil {
+		childCmd.SetOutput(c.Output())
+	}
 }
 
 func (c *Command) Output() io.Writer {
